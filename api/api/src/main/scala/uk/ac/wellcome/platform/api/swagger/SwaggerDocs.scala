@@ -168,7 +168,9 @@ trait MultipleWorksSwagger {
             "genres",
             "production.dates",
             "subjects",
-            "language")),
+            "language",
+            "license",
+            "locationTypes")),
         required = false
       ),
       new Parameter(
