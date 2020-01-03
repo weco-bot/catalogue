@@ -9,6 +9,7 @@ import uk.ac.wellcome.display.models.{DisplayLanguage, DisplayWorkType}
 import uk.ac.wellcome.display.models.v2.{
   DisplayGenre,
   DisplayLicenseV2,
+  DisplayLocationType,
   DisplayPeriod,
   DisplaySubject
 }
@@ -40,6 +41,9 @@ case class DisplayAggregations(
   @Schema(
     description = "License aggregation on a set of results."
   ) license: Option[DisplayAggregation[DisplayLicenseV2]],
+  @Schema(
+    description = "Location type aggregation on a set of results."
+  ) locationTypes: Option[DisplayAggregation[DisplayLocationType]],
   @JsonKey("type") @Schema(name = "type") ontologyType: String = "Aggregations"
 )
 
@@ -89,6 +93,8 @@ object DisplayAggregations {
         subject => DisplaySubject(Unidentifiable(subject), false)
       ),
       license = displayAggregation(aggs.license, DisplayLicenseV2.apply),
+      locationTypes =
+        displayAggregation(aggs.locationTypes, DisplayLocationType.apply)
     )
 
   private def displayAggregation[T, D](

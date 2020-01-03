@@ -18,6 +18,7 @@ case class Aggregations(
   subjects: Option[Aggregation[Subject[Displayable[AbstractRootConcept]]]] =
     None,
   license: Option[Aggregation[License]] = None,
+  locationTypes: Option[Aggregation[LocationType]] = None,
 )
 
 object Aggregations extends Logging {
@@ -44,7 +45,10 @@ object Aggregations extends Logging {
             .flatMap(_.toAgg[Subject[Displayable[AbstractRootConcept]]]),
           license = e4sAggregations
             .getAgg("license")
-            .flatMap(_.toAgg[License])
+            .flatMap(_.toAgg[License]),
+          locationTypes = e4sAggregations
+            .getAgg("locationTypes")
+            .flatMap(_.toAgg[LocationType])
         ))
     } else {
       None
@@ -67,6 +71,12 @@ object Aggregations extends Logging {
   implicit val decodeLicense: Decoder[License] =
     Decoder.decodeString.emap { str =>
       Try(License.createLicense(str)).toEither.left
+        .map(err => err.getMessage)
+    }
+
+  implicit val decodeLocationType: Decoder[LocationType] =
+    Decoder.decodeString.emap { str =>
+      Try(LocationType(str)).toEither.left
         .map(err => err.getMessage)
     }
 

@@ -366,4 +366,78 @@ class ApiV2WorksAggregationsTest extends ApiV2WorksTestBase {
         }
     }
   }
+
+  it("supports aggregating on locationType") {
+    val location1 = createDigitalLocation
+    val location2 = createPhysicalLocation
+    val location3 = createDigitalLocationWith(createImageLocationType)
+    val location4 = createPhysicalLocationWith(LocationType("epbo"))
+
+    val works = List(
+      createLocatedWork("a", List(location1)),
+      createLocatedWork("b", List(location1, location2)),
+      createLocatedWork("c", List(location1, location2, location3)),
+      createLocatedWork("d", List(location1, location2, location3, location4)),
+    )
+
+    withApi {
+      case (indexV2, routes) =>
+        insertIntoElasticsearch(indexV2, works: _*)
+        assertJsonResponse(
+          routes,
+          s"/$apiPrefix/works?aggregations=locationTypes") {
+          Status.OK -> s"""
+            {
+              ${resultList(apiPrefix, totalResults = works.size)},
+              "aggregations": {
+                "type" : "Aggregations",
+                "locationTypes": {
+                  "type" : "Aggregation",
+                  "buckets": [
+                    {
+                      "count" : 4,
+                      "data" : {
+                        "id" : "${location1.locationType.id}",
+                        "label" : "${location1.locationType.label}",
+                        "type" : "LocationType"
+                      },
+                      "type" : "AggregationBucket"
+                    },
+                    {
+                      "count" : 3,
+                      "data" : {
+                        "id" : "${location2.locationType.id}",
+                        "label" : "${location2.locationType.label}",
+                        "type" : "LocationType"
+                      },
+                      "type" : "AggregationBucket"
+                    },
+                    {
+                      "count" : 2,
+                      "data" : {
+                        "id" : "${location3.locationType.id}",
+                        "label" : "${location3.locationType.label}",
+                        "type" : "LocationType"
+                      },
+                      "type" : "AggregationBucket"
+                    },
+                    {
+                      "count" : 1,
+                      "data" : {
+                        "id" : "${location4.locationType.id}",
+                        "label" : "${location4.locationType.label}",
+                        "type" : "LocationType"
+                      },
+                      "type" : "AggregationBucket"
+                    }
+                  ]
+                }
+              },
+              "results": [${works.map(workResponse).mkString(",")}]
+            }
+          """.stripMargin
+        }
+    }
+  }
+
 }

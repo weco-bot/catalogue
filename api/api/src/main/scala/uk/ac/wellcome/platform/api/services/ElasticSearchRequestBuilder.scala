@@ -102,6 +102,11 @@ case class ElasticSearchRequestBuilder(
       TermsAggregation("license")
         .size(100)
         .field("data.items.agent.locations.license.id")
+
+    case AggregationRequest.LocationType =>
+      TermsAggregation("locationTypes")
+        .size(450) // This is bounded, as per location-types.csv
+        .field("data.items.agent.locations.locationType.id")
   }
 
   lazy val sort = queryOptions.sortBy

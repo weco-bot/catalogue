@@ -159,6 +159,7 @@ object MultipleWorksParams extends QueryParamsUtils {
       "subjects" -> AggregationRequest.Subject,
       "language" -> AggregationRequest.Language,
       "license" -> AggregationRequest.License,
+      "locationTypes" -> AggregationRequest.LocationType
     )
 
   implicit val sortDecoder: Decoder[List[SortRequest]] =
