@@ -1,0 +1,8 @@
+feature_vector_inferrer:
+  build: ../feature_extraction/inference
+  volumes:
+    - "../feature_extraction/inference/app:/app"
+  ports:
+    - "80:2718"
+  environment:
+    MODEL_OBJECT_KEY:
