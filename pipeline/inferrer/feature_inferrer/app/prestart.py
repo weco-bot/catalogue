@@ -17,14 +17,10 @@ except Exception as e:
     raise
 
 try:
-    profile_name = (
-        os.environ["AWS_PROFILE_NAME"] if "AWS_PROFILE_NAME" in os.environ else None
-    )
     logger.info("Fetching pretrained LSHEncoder model")
     download_object_from_s3(
         object_key=os.environ["MODEL_OBJECT_KEY"],
-        bucket_name=os.environ["MODEL_DATA_BUCKET"],
-        profile_name=profile_name,
+        bucket_name=os.environ["MODEL_DATA_BUCKET"]
     )
     logger.info("Fetched pretrained LSHEncoder model")
 except ClientError as e:
