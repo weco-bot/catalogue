@@ -33,7 +33,7 @@ def main(n, m, sample_size, feature_vector_path, bucket_name):
 
     print("Loading feature vectors...")
     feature_vectors = []
-    for id in tqdm(ids):
+    for id in tqdm(ids, unit="vec"):
         with open(os.path.join(feature_vector_path, id)) as f:
             feature_vectors.append(np.fromfile(f, dtype=np.float32))
 

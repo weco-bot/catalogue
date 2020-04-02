@@ -12,18 +12,20 @@ def get_s3_client():
 
 def put_object_to_s3(binary_object, key, bucket_name):
     s3_client = get_s3_client()
+    print("Uploading object to S3...")
     s3_client.put_object(Bucket=bucket_name, Key=key, Body=binary_object)
+    print("Uploaded object to S3.")
 
 
 def put_ssm_parameter(path, value, description):
     ssm_client = boto3.client("ssm")
 
-    print(f"Updating SSM path `{path}` to `{value}")
-
+    print(f"Updating SSM path `{path}` to `{value}`...")
     ssm_client.put_parameter(
         Name=path,
         Description=description,
         Value=value,
-        Type="string",
+        Type="String",
         Overwrite=True
     )
+    print("Updated SSM.")
