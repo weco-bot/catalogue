@@ -7,8 +7,10 @@ module "image_inferrer_queue" {
 }
 
 locals {
-  inferrer_host = "localhost"
-  inferrer_port = 80
+  inferrer_host                  = "localhost"
+  inferrer_port                  = 80
+  inferrer_model_key_config_name = "lsh_model"
+  logstash_port                  = 514
 }
 
 module "image_inferrer" {
@@ -38,17 +40,20 @@ module "image_inferrer" {
   }
   inferrer_env_vars = {
     LOGSTASH_HOST     = local.logstash_host
-    LOGSTASH_PORT     = 514
-    MODEL_OBJECT_KEY  = "???"
-    MODEL_DATA_BUCKET = var.inferrer_model_data_bucket
+    LOGSTASH_PORT     = local.logstash_port
+    MODEL_OBJECT_KEY  = data.aws_ssm_parameter.model_data_key.value
+    MODEL_DATA_BUCKET = var.inferrer_model_data_bucket_name
   }
 
   subnets             = var.subnets
-  aws_region          = var.aws_region
   max_capacity        = 5
   messages_bucket_arn = aws_s3_bucket.messages.arn
   queue_read_policy   = module.image_inferrer_queue.read_policy
   inferrer_port       = local.inferrer_port
+}
+
+data "aws_ssm_parameter" "model_data_key" {
+  name = "/catalogue_pipeline/config/inferrer/model_object/${local.inferrer_model_key_config_name}"
 }
 
 module "image_inferrer_topic" {

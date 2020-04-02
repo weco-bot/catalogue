@@ -53,4 +53,4 @@ variable "private_subnets" {
 
 variable "read_storage_s3_role_arn" {}
 
-variable "inferrer_model_data_bucket" {}
+variable "inferrer_model_data_bucket_name" {}
