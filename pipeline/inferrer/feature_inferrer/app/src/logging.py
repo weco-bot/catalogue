@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 import logstash
 
@@ -13,5 +14,6 @@ def get_logstash_logger(name):
         )
         logger.addHandler(logstash_handler)
     except KeyError:
-        # do nothing
+        stream_handler = logging.StreamHandler(sys.stdout)
+        logger.addHandler(stream_handler)
     return logger
