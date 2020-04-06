@@ -56,6 +56,25 @@ data "aws_ssm_parameter" "model_data_key" {
   name = "/catalogue_pipeline/config/inferrer/model_object/${local.inferrer_model_key_config_name}"
 }
 
+resource "aws_iam_role_policy" "read_inferrer_data" {
+  role   = module.image_inferrer.task_role_name
+  policy = data.aws_iam_policy_document.allow_inferrer_data_access.json
+}
+
+data "aws_iam_policy_document" "allow_inferrer_data_access" {
+  statement {
+    actions = [
+      "s3:GetObject*",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${var.inferrer_model_data_bucket_name}",
+      "arn:aws:s3:::${var.inferrer_model_data_bucket_name}/*",
+    ]
+  }
+}
+
 module "image_inferrer_topic" {
   source = "../modules/topic"
 

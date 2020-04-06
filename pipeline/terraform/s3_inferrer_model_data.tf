@@ -9,4 +9,3 @@ resource "aws_s3_bucket" "inferrer_model_core_data" {
     prevent_destroy = true
   }
 }
-
