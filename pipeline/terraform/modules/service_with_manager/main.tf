@@ -19,11 +19,9 @@ module "service" {
 }
 
 module "task_definition" {
-  source = "../../../../../terraform-aws-ecs-service/task_definition/container_with_sidecar"
-  //  source = "git::github.com/wellcomecollection/terraform-aws-ecs-service.git//task_definition/container_with_sidecar?ref=v1.6.0"
+  source = "git::github.com/wellcomecollection/terraform-aws-ecs-service.git//task_definition/container_with_sidecar?ref=v1.7.0"
 
-  task_name   = var.service_name
-  use_awslogs = true
+  task_name = var.service_name
 
   app_container_image  = var.app_container_image
   app_container_name   = var.app_container_name
