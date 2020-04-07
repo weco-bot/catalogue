@@ -41,7 +41,7 @@ object Main extends WellcomeTypesafeApp {
       Http()
         .cachedHostConnectionPool[(Message, Input)](
           config.getOrElse[String]("inferrer.host")("localhost"),
-          config.getOrElse[Int]("inferrer.port")(80)
+          config.getOrElse[String]("inferrer.port")("80").toInt
         )
 
     new InferenceManagerWorkerService(
