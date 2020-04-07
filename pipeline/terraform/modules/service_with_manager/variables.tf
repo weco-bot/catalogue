@@ -79,6 +79,11 @@ variable "app_memory" {
   default = 1024
 }
 
+variable "app_healthcheck_json" {
+  type    = string
+  default = ""
+}
+
 variable "manager_container_image" {}
 
 variable "manager_container_name" {}

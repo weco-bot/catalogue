@@ -19,24 +19,28 @@ module "service" {
 }
 
 module "task_definition" {
-  source = "git::github.com/wellcomecollection/terraform-aws-ecs-service.git//task_definition/container_with_sidecar?ref=v1.6.0"
+  source = "../../../../../terraform-aws-ecs-service/task_definition/container_with_sidecar"
+  //  source = "git::github.com/wellcomecollection/terraform-aws-ecs-service.git//task_definition/container_with_sidecar?ref=v1.6.0"
 
-  task_name = var.service_name
+  task_name   = var.service_name
+  use_awslogs = true
 
-  app_container_image = var.app_container_image
-  app_container_name  = var.app_container_name
-  app_container_port  = var.app_container_port
-  app_cpu             = var.app_cpu
-  app_memory          = var.app_memory
-  app_env_vars        = var.app_env_vars
-  secret_app_env_vars = var.secret_app_env_vars
+  app_container_image  = var.app_container_image
+  app_container_name   = var.app_container_name
+  app_container_port   = var.app_container_port
+  app_cpu              = var.app_cpu
+  app_memory           = var.app_memory
+  app_env_vars         = var.app_env_vars
+  secret_app_env_vars  = var.secret_app_env_vars
+  app_healthcheck_json = var.app_healthcheck_json
 
-  sidecar_container_image = var.manager_container_image
-  sidecar_container_name  = var.manager_container_name
-  sidecar_cpu             = var.manager_cpu
-  sidecar_memory          = var.manager_memory
-  sidecar_env_vars        = var.manager_env_vars
-  secret_sidecar_env_vars = var.secret_manager_env_vars
+  sidecar_container_image          = var.manager_container_image
+  sidecar_container_name           = var.manager_container_name
+  sidecar_cpu                      = var.manager_cpu
+  sidecar_memory                   = var.manager_memory
+  sidecar_env_vars                 = var.manager_env_vars
+  secret_sidecar_env_vars          = var.secret_manager_env_vars
+  sidecar_depends_on_app_condition = var.app_healthcheck_json == "" ? "" : "HEALTHY"
 
   cpu    = var.host_cpu
   memory = var.host_memory
