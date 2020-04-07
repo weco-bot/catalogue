@@ -14,11 +14,9 @@ locals {
 }
 
 module "image_inferrer" {
-  source = "../modules/inference_service"
+  source = "../modules/service_with_manager"
 
-  service_name                      = "${local.namespace_hyphen}_image_inferrer"
-  inference_manager_container_image = local.inference_manager_image
-  inferrer_container_image          = local.feature_inferrer_image
+  service_name = "${local.namespace_hyphen}_image_inferrer"
   security_group_ids = [
     aws_security_group.service_egress.id,
     aws_security_group.interservice.id
@@ -29,7 +27,14 @@ module "image_inferrer" {
 
   namespace_id = aws_service_discovery_private_dns_namespace.namespace.id
 
-  inference_manager_env_vars = {
+  manager_container_name  = "inference_manager"
+  manager_container_image = local.inference_manager_image
+
+  app_container_name  = "inferrer"
+  app_container_image = local.feature_inferrer_image
+  app_container_port  = local.inferrer_port
+
+  manager_env_vars = {
     inferrer_host        = local.inferrer_host
     inferrer_port        = local.inferrer_port
     metrics_namespace    = "${local.namespace_hyphen}_image_inferrer"
@@ -38,7 +43,7 @@ module "image_inferrer" {
     queue_url            = module.image_inferrer_queue.url
     logstash_host        = local.logstash_host
   }
-  inferrer_env_vars = {
+  app_env_vars = {
     LOGSTASH_HOST     = local.logstash_host
     LOGSTASH_PORT     = local.logstash_port
     MODEL_OBJECT_KEY  = data.aws_ssm_parameter.model_data_key.value
@@ -49,7 +54,6 @@ module "image_inferrer" {
   max_capacity        = 5
   messages_bucket_arn = aws_s3_bucket.messages.arn
   queue_read_policy   = module.image_inferrer_queue.read_policy
-  inferrer_port       = local.inferrer_port
 }
 
 data "aws_ssm_parameter" "model_data_key" {
