@@ -27,12 +27,19 @@ module "image_inferrer" {
 
   namespace_id = aws_service_discovery_private_dns_namespace.namespace.id
 
+  host_cpu    = 1024
+  host_memory = 8192
+
   manager_container_name  = "inference_manager"
   manager_container_image = local.inference_manager_image
+  manager_cpu             = 512
+  manager_memory          = 512
 
   app_container_name  = "inferrer"
   app_container_image = local.feature_inferrer_image
   app_container_port  = local.inferrer_port
+  app_cpu             = 512
+  app_memory          = 7680
 
   manager_env_vars = {
     inferrer_host        = local.inferrer_host
