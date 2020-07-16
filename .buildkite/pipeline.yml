@@ -1,0 +1,3 @@
+steps:
+  - label: "internal_model"
+    command: "make internal_model-test"
